@@ -11,11 +11,13 @@ import "./ISushi.sol";
 /// @author Steffel Fenix
 contract SushiYieldSource is IYieldSource {
     using SafeMath for uint256;
-    address public sushiBar;
-    address public sushiAddr;
+   
+    ISushiBar public immutable sushiBar;
+    ISushi public immutable sushiAddr;
+   
     mapping(address => uint256) public balances;
 
-    constructor(address _sushiBar, address _sushiAddr) public {
+    constructor(ISushiBar _sushiBar, ISushi _sushiAddr) public {
         sushiBar = _sushiBar;
         sushiAddr = _sushiAddr;
     }
@@ -23,7 +25,7 @@ contract SushiYieldSource is IYieldSource {
     /// @notice Returns the ERC20 asset token used for deposits.
     /// @return The ERC20 asset token
     function depositToken() public view override returns (address) {
-        return (sushiAddr);
+        return address(sushiAddr);
     }
 
     /// @notice Returns the total balance (in asset tokens).  This includes the deposits and interest.
@@ -39,13 +41,16 @@ contract SushiYieldSource is IYieldSource {
     /// @notice Allows assets to be supplied on other user's behalf using the `to` param.
     /// @param amount The amount of `token()` to be supplied
     /// @param to The user whose balance will receive the tokens
-    function supplyTokenTo(uint256 amount, address to) public override {
-        ISushi(sushiAddr).transferFrom(msg.sender, address(this), amount);
-        ISushi(sushiAddr).approve(sushiBar, amount);
+    function supplyTokenTo(uint256 amount, address to) public override { // include dummy return val?
+       
+        sushiAddr.transferFrom(msg.sender, address(this), amount);
+        sushiAddr.approve(address(sushiBar), amount);
 
         ISushiBar bar = ISushiBar(sushiBar);
         uint256 beforeBalance = bar.balanceOf(address(this));
+        
         bar.enter(amount);
+        
         uint256 afterBalance = bar.balanceOf(address(this));
         uint256 balanceDiff = afterBalance.sub(beforeBalance);
         balances[to] = balances[to].add(balanceDiff);
