@@ -30,18 +30,10 @@ contract SushiYieldSource is IYieldSource {
     /// @return The underlying balance of asset tokens
     function balanceOfToken(address addr) public override returns (uint256) {
         if (balances[addr] == 0) return 0;
-        ISushiBar bar = ISushiBar(sushiBar);
 
-        uint256 shares = bar.balanceOf(address(this));
         uint256 totalShares = bar.totalSupply();
 
-        uint256 sushiBalance =
-            shares.mul(ISushi(sushiAddr).balanceOf(address(sushiBar))).div(
-                totalShares
-            );
-        uint256 sourceShares = bar.balanceOf(address(this));
-
-        return (balances[addr].mul(sushiBalance).div(sourceShares));
+        return balances[addr].mul(ISushi(sushiAddr).balanceOf(address(sushiBar))).div(totalShares);
     }
 
     /// @notice Allows assets to be supplied on other user's behalf using the `to` param.
