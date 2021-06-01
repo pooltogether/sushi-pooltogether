@@ -31,7 +31,7 @@ contract SushiYieldSource is IYieldSource {
     function balanceOfToken(address addr) public override returns (uint256) {
         if (balances[addr] == 0) return 0;
 
-        uint256 totalShares = bar.totalSupply();
+        uint256 totalShares = ISushiBar(sushiBar).totalSupply();
 
         return balances[addr].mul(ISushi(sushiAddr).balanceOf(address(sushiBar))).div(totalShares);
     }
@@ -59,8 +59,26 @@ contract SushiYieldSource is IYieldSource {
         ISushi sushi = ISushi(sushiAddr);
 
         uint256 totalShares = bar.totalSupply();
+        // if no shares outstanding cannot redeem
+        if(totalShares == 0){
+            return 0;
+        }
+
         uint256 barSushiBalance = sushi.balanceOf(address(bar));
-        uint256 requiredShares = amount.mul(totalShares).div(barSushiBalance);
+        // if no bar balance cannot redeem
+        if(barSushiBalance == 0){
+            return 0;
+        }
+
+        //uint256 requiredShares = amount.mul(totalShares).div(barSushiBalance);
+
+        // x2 := floor((y * a + a - 1) / b) = max { x | floor(x * b / a) <= y }
+        // y: amount
+        // a: totalShares
+        // b: barSushiBalance
+
+        uint requiredShares = ((amount.mul(totalShares) + totalShares.sub(1))).div(barSushiBalance);
+
 
         uint256 barBeforeBalance = bar.balanceOf(address(this));
         uint256 sushiBeforeBalance = sushi.balanceOf(address(this));
