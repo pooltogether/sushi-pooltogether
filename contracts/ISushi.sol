@@ -3,6 +3,7 @@
 pragma solidity >=0.6.0 <0.7.0;
 
 interface ISushi {
+    
     function balanceOf(address account) external view returns (uint256);
 
     function transferFrom(
@@ -14,4 +15,5 @@ interface ISushi {
     function transfer(address account, uint256 amount) external returns (bool);
 
     function approve(address spender, uint256 amount) external returns (bool);
+
 }
