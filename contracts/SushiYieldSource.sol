@@ -65,18 +65,15 @@ contract SushiYieldSource is IYieldSource {
         uint256 barSushiBalance = sushi.balanceOf(address(bar));
         uint256 requiredShares = amount.mul(totalShares).div(barSushiBalance);
 
-        uint256 barBeforeBalance = bar.balanceOf(address(this));
         uint256 sushiBeforeBalance = sushi.balanceOf(address(this));
 
         bar.leave(requiredShares);
 
-        uint256 barAfterBalance = bar.balanceOf(address(this));
         uint256 sushiAfterBalance = sushi.balanceOf(address(this));
-
-        uint256 barBalanceDiff = barBeforeBalance.sub(barAfterBalance);
+        
         uint256 sushiBalanceDiff = sushiAfterBalance.sub(sushiBeforeBalance);
 
-        balances[msg.sender] = balances[msg.sender].sub(barBalanceDiff);
+        balances[msg.sender] = balances[msg.sender].sub(requiredShares);
         sushi.transfer(msg.sender, sushiBalanceDiff);
         return (sushiBalanceDiff);
     }
