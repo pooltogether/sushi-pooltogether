@@ -62,8 +62,19 @@ contract SushiYieldSource is IYieldSource {
         ISushi sushi = sushiAddr;
 
         uint256 totalShares = bar.totalSupply();
+        if(totalShares == 0) return 0; 
+
         uint256 barSushiBalance = sushi.balanceOf(address(bar));
-        uint256 requiredShares = amount.mul(totalShares).div(barSushiBalance);
+        if(barSushiBalance == 0) return 0;
+
+        //uint256 requiredShares = amount.mul(totalShares).div(barSushiBalance);
+
+        // x2 := floor((y * a + a - 1) / b) = max { x | floor(x * b / a) <= y }
+        // y: amount
+        // a: totalShares
+        // b: barSushiBalance
+
+        uint requiredShares = ((amount.mul(totalShares) + totalShares.sub(1))).div(barSushiBalance);
 
         uint256 sushiBeforeBalance = sushi.balanceOf(address(this));
 
