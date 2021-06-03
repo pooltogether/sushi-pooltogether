@@ -4,10 +4,11 @@ pragma solidity 0.6.12;
 
 import { IYieldSource } from "@pooltogether/yield-source-interface/contracts/IYieldSource.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+
 import "./ISushiBar.sol";
 import "./ISushi.sol";
 
-/// @title An pooltogether yield source for sushi token
+/// @title A pooltogether yield source for sushi token
 /// @author Steffel Fenix
 contract SushiYieldSource is IYieldSource {
     
@@ -35,8 +36,9 @@ contract SushiYieldSource is IYieldSource {
         if (balances[addr] == 0) return 0;
 
         uint256 totalShares = sushiBar.totalSupply();
+        uint256 barSushiBalance = sushiAddr.balanceOf(address(sushiBar));
 
-        return balances[addr].mul(ISushi(sushiAddr).balanceOf(address(sushiBar))).div(totalShares);
+        return balances[addr].mul(barSushiBalance).div(totalShares);       
     }
 
     /// @notice Allows assets to be supplied on other user's behalf using the `to` param.
@@ -48,9 +50,12 @@ contract SushiYieldSource is IYieldSource {
 
         ISushiBar bar = sushiBar;
         uint256 beforeBalance = bar.balanceOf(address(this));
+        
         bar.enter(amount);
+        
         uint256 afterBalance = bar.balanceOf(address(this));
         uint256 balanceDiff = afterBalance.sub(beforeBalance);
+        
         balances[to] = balances[to].add(balanceDiff);
     }
 
@@ -67,17 +72,9 @@ contract SushiYieldSource is IYieldSource {
         uint256 barSushiBalance = sushi.balanceOf(address(bar));
         if(barSushiBalance == 0) return 0;
 
-        //uint256 requiredShares = amount.mul(totalShares).div(barSushiBalance);
-
-        // x2 := floor((y * a + a - 1) / b) = max { x | floor(x * b / a) <= y }
-        // y: amount
-        // a: totalShares
-        // b: barSushiBalance
-
-        uint requiredShares = ((amount.mul(totalShares) + totalShares.sub(1))).div(barSushiBalance);
-
         uint256 sushiBeforeBalance = sushi.balanceOf(address(this));
 
+        uint requiredShares = ((amount.mul(totalShares) + totalShares.sub(1))).div(barSushiBalance);
         bar.leave(requiredShares);
 
         uint256 sushiAfterBalance = sushi.balanceOf(address(this));
@@ -86,6 +83,8 @@ contract SushiYieldSource is IYieldSource {
 
         balances[msg.sender] = balances[msg.sender].sub(requiredShares);
         sushi.transfer(msg.sender, sushiBalanceDiff);
+        
         return (sushiBalanceDiff);
     }
+
 }
