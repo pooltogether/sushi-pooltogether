@@ -25,7 +25,7 @@ if (process.env.FORK_MAINNET) {
   console.log("Using mainnet fork")
   hardhat = {
     forking: {
-      url: `https://mainnet.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID}`,
+      url: `${process.env.ALCHEMY_URL}`,
     },
     ...hardhat
   }
@@ -46,7 +46,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat,
     mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID}`,
+      url: `https://mainnet.infura.io/v3/${process.env.ALCHEMY_URL}`,
       accounts: {
         mnemonic: process.env.HDWALLET_MNEMONIC || ""
       }
