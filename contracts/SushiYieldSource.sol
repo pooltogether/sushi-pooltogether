@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./ISushiBar.sol";
 import "./ISushi.sol";
 
+import "hardhat/console.sol";
+
 /// @title A pooltogether yield source for sushi token
 /// @author Steffel Fenix
 contract SushiYieldSource is IYieldSource {
@@ -33,6 +35,8 @@ contract SushiYieldSource is IYieldSource {
     /// @notice Returns the total balance (in asset tokens).  This includes the deposits and interest.
     /// @return The underlying balance of asset tokens
     function balanceOfToken(address addr) public override returns (uint256) {
+        console.log("balanceOfToken called from ", msg.sender);
+        console.log("balanceOfToken with addr ",addr);
         if (balances[addr] == 0) return 0;
 
         uint256 totalShares = sushiBar.totalSupply();
@@ -45,6 +49,7 @@ contract SushiYieldSource is IYieldSource {
     /// @param amount The amount of `token()` to be supplied
     /// @param to The user whose balance will receive the tokens
     function supplyTokenTo(uint256 amount, address to) public override {
+        console.log("supplyTokenTo called with ", amount , to);
         sushiAddr.transferFrom(msg.sender, address(this), amount);
         sushiAddr.approve(address(sushiBar), amount);
 
@@ -63,6 +68,7 @@ contract SushiYieldSource is IYieldSource {
     /// @param amount The amount of `token()` to withdraw.  Denominated in `token()` as above.
     /// @return The actual amount of tokens that were redeemed.
     function redeemToken(uint256 amount) public override returns (uint256) {
+        console.log("redeemToken called with ", amount);
         ISushiBar bar = sushiBar;
         ISushi sushi = sushiAddr;
 
@@ -73,12 +79,29 @@ contract SushiYieldSource is IYieldSource {
         if(barSushiBalance == 0) return 0;
 
         uint256 sushiBeforeBalance = sushi.balanceOf(address(this));
+        console.log("sushiBeforeBalance ", sushiBeforeBalance);
+
+        uint256 barBeforeBalance = bar.balanceOf(address(this));
+        console.log("barBeforeBalance ", barBeforeBalance);
 
         uint requiredShares = ((amount.mul(totalShares) + totalShares.sub(1))).div(barSushiBalance);
+        console.log("calling bar.leave() with ", requiredShares);
+
+        // console.log("bar is burning ", requiredShares.mul(sushi.balanceOf(address(sushiBar))).div(sushiBar.totalSupply()));
+
+
         bar.leave(requiredShares);
 
-        uint256 sushiAfterBalance = sushi.balanceOf(address(this));
+        console.log("returned from bar.leave()");
+
+        uint256 barAfterBalance = bar.balanceOf(address(this));
+        console.log("barAfterBalance ", barAfterBalance); 
+        console.log("diff in bar balance: ", barBeforeBalance.sub(barAfterBalance));
         
+
+        uint256 sushiAfterBalance = sushi.balanceOf(address(this));
+        console.log("sushiAfterBalance ", sushiAfterBalance);
+
         uint256 sushiBalanceDiff = sushiAfterBalance.sub(sushiBeforeBalance);
 
         balances[msg.sender] = balances[msg.sender].sub(requiredShares);
