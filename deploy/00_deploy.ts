@@ -13,7 +13,7 @@ const func: DeployFunction =  async (hre: HardhatRuntimeEnvironment) => {
   if (!sushiToken) {
     throw new Error('sushiToken must be defined as a named account')
   }
-
+  console.log("deploying from deployer ", deployer)
   console.time("SushiYieldSource deployed");
   const contract = await deploy('SushiYieldSource', {
     from: deployer,
