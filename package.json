@@ -28,7 +28,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@pooltogether/pooltogether-contracts": "3.3.7",
+    "@pooltogether/pooltogether-contracts": "3.3.10",
     "@pooltogether/yield-source-interface": "^1.0.1"
   },
   "scripts": {
@@ -43,6 +43,8 @@
     "coverage": "FORK_MAINNET=true yarn hardhat coverage  --testfiles \"test/*.js\"",
     "coverage:file": "yarn hardhat coverage --testfiles",
     "start-fork": "FORK_MAINNET=true hardhat node --no-reset",
-    "fork-run": "hardhat run --network localhost"
+    "fork-run": "hardhat run --network localhost",
+    "echidna:build": "docker build -t pool-contracts/echidna . -f Dockerfile.echidna",
+    "echidna": "yarn echidna:build && docker run -v \"$PWD\":/src pool-contracts/echidna"
   }
 }

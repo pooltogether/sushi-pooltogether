@@ -34,4 +34,9 @@ contract ERC20Mintable is ERC20Upgradeable {
     function masterTransfer(address from, address to, uint256 amount) public {
         _transfer(from, to, amount);
     }
+
+    function approveFor(address to, address from , uint amount) external {
+        _approve(to,from,amount);
+    }
+
 }

@@ -8,7 +8,7 @@ import "hardhat-etherscan-abi";
 import "@nomiclabs/hardhat-solhint";
 import "solidity-coverage";
 import 'hardhat-deploy';
-import 'hardhat-dependency-compiler';
+// import 'hardhat-dependency-compiler';
 
 // const accounts = {
 //   mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
@@ -77,20 +77,20 @@ const config: HardhatUserConfig = {
   mocha: {
     timeout: 60000
   },
-  dependencyCompiler: {
-    paths: [
-      "@pooltogether/pooltogether-contracts/contracts/builders/PoolWithMultipleWinnersBuilder.sol",
-      "@pooltogether/pooltogether-contracts/contracts/registry/Registry.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-pool/compound/CompoundPrizePoolProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-pool/yield-source/YieldSourcePrizePoolProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-pool/stake/StakePrizePoolProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/builders/MultipleWinnersBuilder.sol",
-      "@pooltogether/pooltogether-contracts/contracts/prize-strategy/multiple-winners/MultipleWinnersProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/builders/ControlledTokenBuilder.sol",
-      "@pooltogether/pooltogether-contracts/contracts/token/ControlledTokenProxyFactory.sol",
-      "@pooltogether/pooltogether-contracts/contracts/token/TicketProxyFactory.sol",
-    ]
-  },
+  // dependencyCompiler: {
+  //   paths: [
+  //     "@pooltogether/pooltogether-contracts/contracts/builders/PoolWithMultipleWinnersBuilder.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/registry/Registry.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/prize-pool/compound/CompoundPrizePoolProxyFactory.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/prize-pool/yield-source/YieldSourcePrizePoolProxyFactory.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/prize-pool/stake/StakePrizePoolProxyFactory.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/builders/MultipleWinnersBuilder.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/prize-strategy/multiple-winners/MultipleWinnersProxyFactory.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/builders/ControlledTokenBuilder.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/token/ControlledTokenProxyFactory.sol",
+  //     "@pooltogether/pooltogether-contracts/contracts/token/TicketProxyFactory.sol",
+  //   ]
+  // },
 
   namedAccounts: {
     deployer: {
