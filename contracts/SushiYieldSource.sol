@@ -59,9 +59,10 @@ contract SushiYieldSource is IYieldSource {
         balances[to] = balances[to].add(balanceDiff);
     }
 
-    /// @notice Redeems tokens from the yield source from the msg.sender, it burn yield bearing tokens and return token to the sender.
+    /// @notice Redeems tokens from the yield source to the msg.sender, it burns yield bearing tokens and returns token to the sender.
     /// @param amount The amount of `token()` to withdraw.  Denominated in `token()` as above.
-    /// @return The actual amount of tokens that were redeemed.
+    /// @dev The maxiumum that can be called for token() is calculated by balanceOfToken() above.
+    /// @return The actual amount of tokens that were redeemed. This may be different from the amount passed due to the fractional math involved. 
     function redeemToken(uint256 amount) public override returns (uint256) {
         ISushiBar bar = sushiBar;
         ISushi sushi = sushiAddr;
