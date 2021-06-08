@@ -108,7 +108,7 @@ describe("SushiYieldSource", function () {
         await yieldSource.redeemToken(totalAmount);
         expect(await sushi.balanceOf(wallet.address)).to.be.closeTo(
           totalAmount,
-          1
+          2
         );
       }
     );
