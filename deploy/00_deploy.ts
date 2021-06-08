@@ -2,6 +2,7 @@ import {HardhatRuntimeEnvironment} from "hardhat/types";
 import {DeployFunction} from "hardhat-deploy/types";
 
 const func: DeployFunction =  async (hre: HardhatRuntimeEnvironment) => {
+  console.log("running deploy script")
   const {deployments, getNamedAccounts} = hre;
   const {deploy} = deployments;
   const {deployer, sushiBar, sushiToken} = await getNamedAccounts();

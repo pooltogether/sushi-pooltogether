@@ -46,19 +46,19 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat,
     mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.ALCHEMY_URL}`,
+      url: `${process.env.ALCHEMY_URL}`,
       accounts: {
         mnemonic: process.env.HDWALLET_MNEMONIC || ""
       }
     },
     kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID}`,
+      url: `${process.env.WEB3_INFURA_PROJECT_ID}`,
       accounts: {
         mnemonic: process.env.HDWALLET_MNEMONIC || ""
       }
     },
     rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID}`,
+      url: `${process.env.WEB3_INFURA_PROJECT_ID}`,
       accounts: {
         mnemonic: process.env.HDWALLET_MNEMONIC || ""
       }
