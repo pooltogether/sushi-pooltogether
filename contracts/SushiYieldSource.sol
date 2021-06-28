@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
 pragma solidity 0.6.12;
-
 import "@pooltogether/yield-source-interface/contracts/IYieldSource.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
@@ -116,6 +115,7 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         uint256 sushiBalanceDiff = sushiAfterBalance.sub(sushiBeforeBalance);
 
         balances[msg.sender] = balances[msg.sender].sub(requiredSharesBalance);
+
         sushi.safeTransfer(msg.sender, sushiBalanceDiff);
         emit RedeemedToken(msg.sender, requiredSharesBalance, amount);
 
