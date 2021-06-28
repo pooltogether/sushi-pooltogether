@@ -4,13 +4,15 @@ pragma solidity 0.6.12;
 
 import "@pooltogether/yield-source-interface/contracts/IYieldSource.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import "./ISushiBar.sol";
 import "./ISushi.sol";
 
 /// @title A pooltogether yield source for sushi token
 /// @author Steffel Fenix
-contract SushiYieldSource is IYieldSource {
+contract SushiYieldSource is IYieldSource, ReentrancyGuard {
+
     using SafeMath for uint256;
 
     ISushiBar public immutable sushiBar;
@@ -33,7 +35,7 @@ contract SushiYieldSource is IYieldSource {
         address indexed to
     );
 
-    constructor(ISushiBar _sushiBar, ISushi _sushiAddr) public {
+    constructor(ISushiBar _sushiBar, ISushi _sushiAddr) public ReentrancyGuard() {
         require(
             address(_sushiBar) != address(0),
             "SushiYieldSource/sushiBar-not-zero-address"
@@ -67,7 +69,7 @@ contract SushiYieldSource is IYieldSource {
     /// @notice Allows assets to be supplied on other user's behalf using the `to` param.
     /// @param amount The amount of `token()` to be supplied
     /// @param to The user whose balance will receive the tokens
-    function supplyTokenTo(uint256 amount, address to) external override {
+    function supplyTokenTo(uint256 amount, address to) external override nonReentrant {
         ISushiBar bar = sushiBar;
         ISushi sushi = sushiAddr;
 
@@ -89,7 +91,7 @@ contract SushiYieldSource is IYieldSource {
     /// @param amount The amount of `token()` to withdraw.  Denominated in `token()` as above.
     /// @dev The maxiumum that can be called for token() is calculated by balanceOfToken() above.
     /// @return The actual amount of tokens that were redeemed. This may be different from the amount passed due to the fractional math involved.
-    function redeemToken(uint256 amount) external override returns (uint256) {
+    function redeemToken(uint256 amount) external override nonReentrant returns (uint256) {
         ISushiBar bar = sushiBar;
         ISushi sushi = sushiAddr;
 
