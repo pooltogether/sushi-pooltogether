@@ -54,6 +54,7 @@ describe("SushiYieldSource", function () {
     }
 
     amount = toWei("100");
+    await yieldSource.intialize()
     await sushi.mint(wallet.address, amount);
     await sushi.mint(wallet2.address, amount.mul(99));
     await sushi.connect(wallet2).approve(sushiBar.address, amount.mul(99));

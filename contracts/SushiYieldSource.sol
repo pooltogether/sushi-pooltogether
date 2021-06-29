@@ -50,6 +50,11 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         sushiAddr = _sushiAddr;
     }
 
+    /// @notice Approve SUSHI to spend infinite sushiBar (xSUSHI)
+    function intialize() external {
+        sushiAddr.safeApprove(address(sushiBar), type(uint256).max);
+    }
+
     /// @notice Returns the ERC20 asset token used for deposits.
     /// @return The ERC20 asset token
     function depositToken() external view override returns (address) {
@@ -74,8 +79,7 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         ISushiBar bar = sushiBar;
         ISushi sushi = sushiAddr;
 
-        sushi.transferFrom(msg.sender, address(this), amount);
-        sushi.approve(address(bar), amount);
+        sushi.safeTransferFrom(msg.sender, address(this), amount);
 
         uint256 beforeBalance = bar.balanceOf(address(this));
 
