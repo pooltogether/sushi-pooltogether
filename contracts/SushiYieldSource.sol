@@ -53,6 +53,7 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
 
 
     ///@notice Approve SUSHI to spend infinite sushiBar (xSUSHI)
+    /// @dev No initializer flag required
     function intialize() external {
         sushiAddr.safeApprove(address(sushiBar), type(uint256).max);
     }
