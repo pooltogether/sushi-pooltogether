@@ -51,6 +51,12 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         _sushiAddr.safeApprove(address(_sushiBar), type(uint256).max);
     }
 
+
+    ///@notice Approve SUSHI to spend infinite sushiBar (xSUSHI)
+    function intialize() external {
+        sushiAddr.safeApprove(address(sushiBar), type(uint256).max);
+    }
+
     /// @notice Returns the ERC20 asset token used for deposits.
     /// @return The ERC20 asset token
     function depositToken() external view override returns (address) {
