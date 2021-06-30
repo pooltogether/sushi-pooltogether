@@ -72,6 +72,10 @@ contract SushiYieldSource is IYieldSource {
         sushiAddr.approve(address(sushiBar), amount);
 
         ISushiBar bar = sushiBar;
+
+        sushi.transferFrom(msg.sender, address(this), amount);
+        sushi.approve(address(bar), amount);
+
         uint256 beforeBalance = bar.balanceOf(address(this));
 
         bar.enter(amount);
