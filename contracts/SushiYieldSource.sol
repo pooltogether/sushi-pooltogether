@@ -19,6 +19,21 @@ contract SushiYieldSource is IYieldSource {
 
     mapping(address => uint256) public balances;
 
+    /// @notice Emitted when asset tokens are redeemed from the yield source
+    event RedeemedToken(
+        address indexed from,
+        uint256 shares,
+        uint256 amount
+    );
+
+    /// @notice Emitted when asset tokens are supplied to the yield source
+    event SuppliedTokenTo(
+        address indexed from,
+        uint256 shares,
+        uint256 amount,
+        address indexed to
+    );
+
     constructor(ISushiBar _sushiBar, ISushi _sushiAddr) public {
         sushiBar = _sushiBar;
         sushiAddr = _sushiAddr;
@@ -57,6 +72,7 @@ contract SushiYieldSource is IYieldSource {
         uint256 balanceDiff = afterBalance.sub(beforeBalance);
 
         balances[to] = balances[to].add(balanceDiff);
+        emit SuppliedTokenTo(msg.sender, balanceDiff, amount, to);
     }
 
     /// @notice Redeems tokens from the yield source to the msg.sender, it burns yield bearing tokens and returns token to the sender.
@@ -87,6 +103,7 @@ contract SushiYieldSource is IYieldSource {
 
         balances[msg.sender] = balances[msg.sender].sub(requiredSharesBalance);
         sushi.transfer(msg.sender, sushiBalanceDiff);
+        emit RedeemedToken(msg.sender, requiredSharesBalance, amount);
 
         return (sushiBalanceDiff);
     }

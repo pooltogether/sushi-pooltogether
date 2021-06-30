@@ -67,7 +67,7 @@ describe("SushiYieldSource", function () {
 
   it("supplyTokenTo", async function () {
     await sushi.connect(wallet).approve(yieldSource.address, amount);
-    await yieldSource.supplyTokenTo(amount, wallet.address);
+    expect(await yieldSource.supplyTokenTo(amount, wallet.address)).to.emit(yieldSource, "SuppliedTokenTo");
     expect(await sushi.balanceOf(sushiBar.address)).to.eq(amount.mul(100));
     expect(await yieldSource.callStatic.balanceOfToken(wallet.address)).to.eq(
       amount
@@ -79,7 +79,7 @@ describe("SushiYieldSource", function () {
     await yieldSource.supplyTokenTo(amount, wallet.address);
 
     expect(await sushi.balanceOf(wallet.address)).to.eq(0);
-    await yieldSource.redeemToken(amount);
+    expect(await yieldSource.redeemToken(amount)).to.emit(yieldSource, "RedeemedToken");
     expect(await sushi.balanceOf(wallet.address)).to.eq(amount);
   });
 
