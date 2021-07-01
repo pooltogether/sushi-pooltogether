@@ -110,7 +110,7 @@ describe("SushiYieldSource integration", function () {
       { gasLimit: 9500000 }
     );
 
-    const exchangeWalletAddress = "0xD551234Ae421e3BCBA99A0Da6d736074f22192FF";
+    const exchangeWalletAddress = "0xF977814e90dA44bFA03b6295A0616a897441aceC";
     await hre.network.provider.request({
       method: "hardhat_impersonateAccount",
       params: [exchangeWalletAddress],
