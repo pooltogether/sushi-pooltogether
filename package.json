@@ -39,7 +39,7 @@
     "etherscan-verify": "hardhat etherscan-verify --network",
     "test:integration": "FORK_MAINNET=true yarn hardhat test --network hardhat",
     "test": "yarn hardhat test --network hardhat test/unit_test.js",
-    "lint": "yarn solhint 'contracts/SushiYieldSource.sol' && yarn prettier -c './**/*.js'",
+    "lint": "yarn solhint 'contracts/SushiYieldSource.sol'",
     "format": "yarn prettier --write contracts/*.sol && yarn prettier --write test/*.js",
     "hint": "solhint \"contracts/SushiYieldSource.sol\"",
     "coverage": "OPTIMIZER_DISABLED=true hardhat coverage --testfiles \"test/unit_test.js\"",
