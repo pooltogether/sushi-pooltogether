@@ -26,13 +26,13 @@ contract SushiYieldSource is IYieldSource {
 
     /// @notice Returns the ERC20 asset token used for deposits.
     /// @return The ERC20 asset token
-    function depositToken() public view override returns (address) {
+    function depositToken() external view override returns (address) {
         return address(sushiAddr);
     }
 
     /// @notice Returns the total balance (in asset tokens).  This includes the deposits and interest.
     /// @return The underlying balance of asset tokens
-    function balanceOfToken(address addr) public override returns (uint256) {
+    function balanceOfToken(address addr) external override returns (uint256) {
         if (balances[addr] == 0) return 0;
 
         uint256 totalShares = sushiBar.totalSupply();
@@ -44,7 +44,7 @@ contract SushiYieldSource is IYieldSource {
     /// @notice Allows assets to be supplied on other user's behalf using the `to` param.
     /// @param amount The amount of `token()` to be supplied
     /// @param to The user whose balance will receive the tokens
-    function supplyTokenTo(uint256 amount, address to) public override {
+    function supplyTokenTo(uint256 amount, address to) external override {
         sushiAddr.transferFrom(msg.sender, address(this), amount);
         sushiAddr.approve(address(sushiBar), amount);
 
@@ -63,7 +63,7 @@ contract SushiYieldSource is IYieldSource {
     /// @param amount The amount of `token()` to withdraw.  Denominated in `token()` as above.
     /// @dev The maxiumum that can be called for token() is calculated by balanceOfToken() above.
     /// @return The actual amount of tokens that were redeemed. This may be different from the amount passed due to the fractional math involved.
-    function redeemToken(uint256 amount) public override returns (uint256) {
+    function redeemToken(uint256 amount) external override returns (uint256) {
         ISushiBar bar = sushiBar;
         ISushi sushi = sushiAddr;
 
