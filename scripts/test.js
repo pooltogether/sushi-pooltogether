@@ -34,15 +34,15 @@ async function getYieldSourcePrizePoolProxy(tx) {
 }
 
 async function run() {
-  console.log("running fork script")
+  console.log("running fork script");
 
   await hre.network.provider.request({
     method: "hardhat_impersonateAccount",
     params: [SUSHI_HOLDER],
   });
 
-  const SUSHI_TOKEN_ADDRESS = "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2"
-  const XSUSHI_ADDRESS = "0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272"
+  const SUSHI_TOKEN_ADDRESS = "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2";
+  const XSUSHI_ADDRESS = "0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272";
 
   const sushiHolder = await ethers.provider.getUncheckedSigner(SUSHI_HOLDER);
   const sushi = await ethers.getContractAt(
@@ -50,19 +50,19 @@ async function run() {
     SUSHI_TOKEN_ADDRESS,
     sushiHolder
   );
-  console.log("getting builder")
+  console.log("getting builder");
   const builder = await ethers.getContractAt(
     "PoolWithMultipleWinnersBuilder",
     "0x39E2F33ff4Ad3491106B3BB15dc66EbE24e4E9C7"
   );
-  console.log("deploying")
+  console.log("deploying");
   SushiYieldSourceFactory = await ethers.getContractFactory("SushiYieldSource");
   sushiYieldSource = await SushiYieldSourceFactory.deploy(
     XSUSHI_ADDRESS,
-    SUSHI_TOKEN_ADDRESS 
+    SUSHI_TOKEN_ADDRESS
   );
 
-  console.log("deployed SushiYieldSource at ", sushiYieldSource.address)
+  console.log("deployed SushiYieldSource at ", sushiYieldSource.address);
 
   const block = await ethers.provider.getBlock();
 
