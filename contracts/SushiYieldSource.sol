@@ -68,10 +68,12 @@ contract SushiYieldSource is IYieldSource {
     /// @param amount The amount of `token()` to be supplied
     /// @param to The user whose balance will receive the tokens
     function supplyTokenTo(uint256 amount, address to) external override {
-        sushiAddr.transferFrom(msg.sender, address(this), amount);
-        sushiAddr.approve(address(sushiBar), amount);
-
         ISushiBar bar = sushiBar;
+        ISushi sushi = sushiAddr;
+
+        sushi.transferFrom(msg.sender, address(this), amount);
+        sushi.approve(address(bar), amount);
+
         uint256 beforeBalance = bar.balanceOf(address(this));
 
         bar.enter(amount);
