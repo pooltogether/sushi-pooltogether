@@ -17,6 +17,18 @@ describe("SushiYieldSource", function () {
   let yieldSource;
   let amount;
 
+  let SushiYieldSourceContract;
+
+  let isDeployTest = false;
+
+  const deploySushiYieldSource = async (sushiBarAddress, sushiAddress) => {
+    yieldSource = await SushiYieldSourceContract.deploy(
+      sushiBarAddress,
+      sushiAddress,
+      overrides
+    );
+  };
+
   beforeEach(async function () {
     [wallet, wallet2] = await ethers.getSigners();
     const ERC20MintableContract = await hre.ethers.getContractFactory(
@@ -33,19 +45,47 @@ describe("SushiYieldSource", function () {
     );
     sushiBar = await SushiBarContract.deploy(sushi.address);
 
-    const SushiYieldSourceContract = await ethers.getContractFactory(
+    SushiYieldSourceContract = await ethers.getContractFactory(
       "SushiYieldSource"
     );
-    yieldSource = await SushiYieldSourceContract.deploy(
-      sushiBar.address,
-      sushi.address,
-      overrides
-    );
+
+    if (!isDeployTest) {
+      deploySushiYieldSource(sushiBar.address, sushi.address);
+    }
+
     amount = toWei("100");
     await sushi.mint(wallet.address, amount);
     await sushi.mint(wallet2.address, amount.mul(99));
     await sushi.connect(wallet2).approve(sushiBar.address, amount.mul(99));
     await sushiBar.connect(wallet2).enter(amount.mul(99));
+  });
+
+  describe("constructor()", () => {
+    let randomWalletAddress;
+
+    before(() => {
+      isDeployTest = true;
+    });
+
+    beforeEach(() => {
+      randomWalletAddress = ethers.Wallet.createRandom().address;
+    });
+
+    after(() => {
+      isDeployTest = false;
+    });
+
+    it("should fail if sushiBar address is address 0", async () => {
+      await expect(
+        deploySushiYieldSource(ethers.constants.AddressZero, sushi.address)
+      ).to.be.revertedWith("SushiYieldSource/sushiBar-not-zero-address");
+    });
+
+    it("should fail if sushi address is address 0", async () => {
+      await expect(
+        deploySushiYieldSource(sushiBar.address, ethers.constants.AddressZero)
+      ).to.be.revertedWith("SushiYieldSource/sushiAddr-not-zero-address");
+    });
   });
 
   it("get token address", async function () {

@@ -2,7 +2,7 @@
 
 pragma solidity 0.6.12;
 
-import { IYieldSource } from "@pooltogether/yield-source-interface/contracts/IYieldSource.sol";
+import "@pooltogether/yield-source-interface/contracts/IYieldSource.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./ISushiBar.sol";
@@ -11,7 +11,6 @@ import "./ISushi.sol";
 /// @title A pooltogether yield source for sushi token
 /// @author Steffel Fenix
 contract SushiYieldSource is IYieldSource {
-
     using SafeMath for uint256;
 
     ISushiBar public immutable sushiBar;
@@ -35,6 +34,15 @@ contract SushiYieldSource is IYieldSource {
     );
 
     constructor(ISushiBar _sushiBar, ISushi _sushiAddr) public {
+        require(
+            address(_sushiBar) != address(0),
+            "SushiYieldSource/sushiBar-not-zero-address"
+        );
+        require(
+            address(_sushiAddr) != address(0),
+            "SushiYieldSource/sushiAddr-not-zero-address"
+        );
+
         sushiBar = _sushiBar;
         sushiAddr = _sushiAddr;
     }
@@ -107,5 +115,4 @@ contract SushiYieldSource is IYieldSource {
 
         return (sushiBalanceDiff);
     }
-
 }
