@@ -63,18 +63,22 @@ describe("SushiYieldSource", function () {
   });
 
   describe("constructor()", () => {
-    let randomWalletAddress;
-
     before(() => {
       isDeployTest = true;
     });
 
-    beforeEach(() => {
-      randomWalletAddress = ethers.Wallet.createRandom().address;
-    });
-
     after(() => {
       isDeployTest = false;
+    });
+
+    it('should succeed to construct yield source', async () => {
+      await deploySushiYieldSource(sushiBar.address, sushi.address);
+
+      expect(await yieldSource.sushiBar()).to.equal(sushiBar.address);
+      expect(await yieldSource.sushiAddr()).to.equal(sushi.address);
+      expect(await sushi.allowance(yieldSource.address, sushiBar.address)).to.equal(
+        ethers.constants.MaxUint256,
+      );
     });
 
     it("should fail if sushiBar address is address 0", async () => {
@@ -87,6 +91,13 @@ describe("SushiYieldSource", function () {
       await expect(
         deploySushiYieldSource(sushiBar.address, ethers.constants.AddressZero)
       ).to.be.revertedWith("SushiYieldSource/sushiAddr-not-zero-address");
+    });
+  });
+
+  describe('approveMaxAmount()', () => {
+    it('should approve Sushi to spend max uint256 amount', async () => {
+      expect(await yieldSource.callStatic.approveMaxAmount()).to.eq(true);
+      expect(await sushi.allowance(yieldSource.address, sushiBar.address)).to.eq(ethers.constants.MaxUint256);
     });
   });
 

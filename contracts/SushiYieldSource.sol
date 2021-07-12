@@ -16,7 +16,10 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
+    /// @notice Interface of the SushiBar contract
     ISushiBar public immutable sushiBar;
+
+    /// @notice Interface for the Sushi token
     IERC20 public immutable sushiAddr;
 
     mapping(address => uint256) public balances;
@@ -50,6 +53,19 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         sushiAddr = _sushiAddr;
 
         _sushiAddr.safeApprove(address(_sushiBar), type(uint256).max);
+    }
+
+    /// @notice Approve SUSHI to spend infinite sushiBar (xSUSHI)
+    /// @dev Emergency function to re-approve max amount if approval amount dropped too low
+    /// @return true if operation is successful
+    function approveMaxAmount() external returns (bool) {
+        address _sushiBarAddress = address(sushiBar);
+        IERC20 sushi = sushiAddr;
+
+        uint256 allowance = sushi.allowance(address(this), _sushiBarAddress);
+
+        sushi.safeIncreaseAllowance(_sushiBarAddress, type(uint256).max.sub(allowance));
+        return true;
     }
 
     /// @notice Returns the ERC20 asset token used for deposits.
@@ -116,6 +132,7 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         uint256 sushiBalanceDiff = sushiAfterBalance.sub(sushiBeforeBalance);
 
         balances[msg.sender] = balances[msg.sender].sub(requiredSharesBalance);
+
         sushi.safeTransfer(msg.sender, sushiBalanceDiff);
         emit RedeemedToken(msg.sender, requiredSharesBalance, amount);
 
