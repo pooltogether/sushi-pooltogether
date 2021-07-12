@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/pooltogether/sushi-pooltogether/badge.svg)](https://coveralls.io/github/pooltogether/sushi-pooltogether)
+[![Coverage Status](https://coveralls.io/repos/github/pooltogether/sushi-pooltogether/badge.svg?branch=master)](https://coveralls.io/github/pooltogether/sushi-pooltogether?branch=master)
 ![Tests](https://github.com/pooltogether/sushi-pooltogether/actions/workflows/test.yml/badge.svg)
 ![Linting](https://github.com/pooltogether/sushi-pooltogether/actions/workflows/lint.yml/badge.svg)
 
