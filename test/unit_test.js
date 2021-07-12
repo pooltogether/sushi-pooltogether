@@ -36,6 +36,7 @@ describe("SushiYieldSource", function () {
       wallet,
       overrides
     );
+
     sushi = await ERC20MintableContract.deploy("Sushi", "SUSHI");
 
     const SushiBarContract = await hre.ethers.getContractFactory(
@@ -50,10 +51,11 @@ describe("SushiYieldSource", function () {
     );
 
     if (!isDeployTest) {
-      deploySushiYieldSource(sushiBar.address, sushi.address);
+      await deploySushiYieldSource(sushiBar.address, sushi.address);
     }
 
     amount = toWei("100");
+
     await sushi.mint(wallet.address, amount);
     await sushi.mint(wallet2.address, amount.mul(99));
     await sushi.connect(wallet2).approve(sushiBar.address, amount.mul(99));

@@ -3,20 +3,21 @@
 pragma solidity 0.6.12;
 
 import "@pooltogether/yield-source-interface/contracts/IYieldSource.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import "./ISushiBar.sol";
-import "./ISushi.sol";
 
 /// @title A pooltogether yield source for sushi token
 /// @author Steffel Fenix
 contract SushiYieldSource is IYieldSource, ReentrancyGuard {
-
+    using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     ISushiBar public immutable sushiBar;
-    ISushi public immutable sushiAddr;
+    IERC20 public immutable sushiAddr;
 
     mapping(address => uint256) public balances;
 
@@ -35,7 +36,7 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         address indexed to
     );
 
-    constructor(ISushiBar _sushiBar, ISushi _sushiAddr) public ReentrancyGuard() {
+    constructor(ISushiBar _sushiBar, IERC20 _sushiAddr) public ReentrancyGuard() {
         require(
             address(_sushiBar) != address(0),
             "SushiYieldSource/sushiBar-not-zero-address"
@@ -47,6 +48,8 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
 
         sushiBar = _sushiBar;
         sushiAddr = _sushiAddr;
+
+        _sushiAddr.safeApprove(address(_sushiBar), type(uint256).max);
     }
 
     /// @notice Returns the ERC20 asset token used for deposits.
@@ -71,10 +74,9 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
     /// @param to The user whose balance will receive the tokens
     function supplyTokenTo(uint256 amount, address to) external override nonReentrant {
         ISushiBar bar = sushiBar;
-        ISushi sushi = sushiAddr;
+        IERC20 sushi = sushiAddr;
 
-        sushi.transferFrom(msg.sender, address(this), amount);
-        sushi.approve(address(bar), amount);
+        sushi.safeTransferFrom(msg.sender, address(this), amount);
 
         uint256 beforeBalance = bar.balanceOf(address(this));
 
@@ -93,7 +95,7 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
     /// @return The actual amount of tokens that were redeemed. This may be different from the amount passed due to the fractional math involved.
     function redeemToken(uint256 amount) external override nonReentrant returns (uint256) {
         ISushiBar bar = sushiBar;
-        ISushi sushi = sushiAddr;
+        IERC20 sushi = sushiAddr;
 
         uint256 totalShares = bar.totalSupply();
         if (totalShares == 0) return 0;
@@ -114,7 +116,7 @@ contract SushiYieldSource is IYieldSource, ReentrancyGuard {
         uint256 sushiBalanceDiff = sushiAfterBalance.sub(sushiBeforeBalance);
 
         balances[msg.sender] = balances[msg.sender].sub(requiredSharesBalance);
-        sushi.transfer(msg.sender, sushiBalanceDiff);
+        sushi.safeTransfer(msg.sender, sushiBalanceDiff);
         emit RedeemedToken(msg.sender, requiredSharesBalance, amount);
 
         return (sushiBalanceDiff);

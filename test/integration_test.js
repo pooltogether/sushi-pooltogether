@@ -144,6 +144,7 @@ describe("SushiYieldSource integration", function () {
       "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
       { gasLimit: 9500000 }
     );
+
     const yieldSourcePrizePoolConfig = {
       yieldSource: yieldSource.address,
       maxExitFeeMantissa: toWei("0.5"),
